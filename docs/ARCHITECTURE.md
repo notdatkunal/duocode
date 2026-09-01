@@ -2,7 +2,7 @@
 
 ## 1. Overview
 
-DuoCode unifies habit-tracking, gamification, code scrapbooking, and spaced repetition into a single cohesive platform.
+DuoCode unifies habit-tracking, gamification, code scrapbooking (The Vault), and swipe-based discovery/matchmaking (GitMatch) into a single cohesive platform.
 
 ---
 
@@ -14,6 +14,8 @@ CREATE TABLE users (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     username VARCHAR(64) UNIQUE NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
+    github_username VARCHAR(64),
+    github_access_token_enc TEXT,
     current_streak_days INT DEFAULT 0,
     longest_streak_days INT DEFAULT 0,
     total_xp INT DEFAULT 0,
@@ -73,16 +75,65 @@ CREATE TABLE spaced_reviews (
     next_review_due TIMESTAMPTZ DEFAULT NOW(),
     last_reviewed_at TIMESTAMPTZ
 );
+
+-- 6. GitMatch: Discovery Deck Repositories
+CREATE TABLE gitmatch_repos (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    github_repo_id BIGINT UNIQUE NOT NULL,
+    repo_name VARCHAR(128) NOT NULL,
+    owner VARCHAR(128) NOT NULL,
+    description TEXT,
+    stars_count INT DEFAULT 0,
+    forks_count INT DEFAULT 0,
+    language VARCHAR(64),
+    topics TEXT[] DEFAULT '{}',
+    readme_snippet TEXT,
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- 7. GitMatch: User Swipes & Developer Matches
+CREATE TABLE user_swipes (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_id UUID REFERENCES users(id) ON DELETE CASCADE,
+    target_type VARCHAR(16) NOT NULL, -- 'REPO' OR 'DEVELOPER'
+    target_id UUID NOT NULL,
+    swipe_action VARCHAR(16) NOT NULL, -- 'STAR', 'VAULT', 'SKIP', 'LIKE_DEV', 'PASS_DEV'
+    created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+CREATE TABLE dev_matches (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    user_a UUID REFERENCES users(id) ON DELETE CASCADE,
+    user_b UUID REFERENCES users(id) ON DELETE CASCADE,
+    match_status VARCHAR(16) DEFAULT 'MUTUAL_MATCH',
+    created_at TIMESTAMPTZ DEFAULT NOW(),
+    UNIQUE(user_a, user_b)
+);
 ```
 
 ---
 
-## 3. The Unified User Journey
+## 3. The Unified User Experience Loop
 
-1. **Daily Push Reminder:** DuoCode's mascot checks if the user has practiced today. If not, it sends a targeted reminder recommending a problem due in their Spaced Repetition queue.
-2. **1-Click Clipper:** The user solves the problem on LeetCode and uses the DuoCode browser extension to clip the solution into **The Vault**.
-3. **Automated Streak & XP Reward:**
-   - Saving a solution to **The Vault** automatically marks today's streak as completed.
-   - Rewards +25 XP / +50 XP and increments league rank.
-   - Mascot transitions from `PASSIVE_AGGRESSIVE` to `PROUD`.
-4. **Mascot Quick-Quiz Drill:** In spare moments, the user opens the mobile app for a 2-minute flashcard quiz where the mascot tests their recall on previously vaulted solutions.
+```
+┌─────────────────────────────────────────────────────────────┐
+│ 1. Practice & Streaks:                                      │
+│    • Complete daily challenge & protect streak              │
+│    • Climb weekly leagues & earn XP                         │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 2. The Vault:                                               │
+│    • Save solutions, Big-O metrics & whiteboard notes       │
+│    • SM-2 spaced repetition active recall quizzes           │
+└──────────────────────────────┬──────────────────────────────┘
+                               │
+                               ▼
+┌─────────────────────────────────────────────────────────────┐
+│ 3. GitMatch Discovery:                                      │
+│    • Swipe right on trending GitHub repos to star them      │
+│    • Swipe up to save best algorithms directly to Vault     │
+│    • Match with peer devs for 1v1 mock interview battles    │
+└─────────────────────────────────────────────────────────────┘
+```
