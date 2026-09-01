@@ -6,6 +6,13 @@
 [![Status](https://img.shields.io/badge/status-active%20development-orange.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Web%20%7C%20Mobile%20%7C%20Extension-green.svg)]()
 
+
+[![Views](https://hits.sh/github.com/notdatkunal/duocode.svg?view=today-total&style=flat-square&label=Views&color=007ec6)](https://hits.sh/github.com/notdatkunal/duocode/)
+[![GitHub Stars](https://img.shields.io/github/stars/notdatkunal/duocode?style=flat-square&logo=github&color=gold)](https://github.com/notdatkunal/duocode/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/notdatkunal/duocode?style=flat-square&logo=github)](https://github.com/notdatkunal/duocode/network)
+[![Commit Activity](https://img.shields.io/github/commit-activity/m/notdatkunal/duocode?style=flat-square&logo=git)](https://github.com/notdatkunal/duocode/pulse)
+[![Last Commit](https://img.shields.io/github/last-commit/notdatkunal/duocode?style=flat-square)](https://github.com/notdatkunal/duocode/commits/main)
+
 ---
 
 ## 📌 Overview
@@ -118,3 +125,14 @@ It unifies:
 ## 📄 License
 
 This project is licensed under the MIT License.
+
+
+---
+
+## 📈 Repository Telemetry & Star History
+
+<div align="center">
+  <a href="https://star-history.com/#notdatkunal/duocode&Date">
+    <img src="https://api.star-history.com/svg?repos=notdatkunal/duocode&type=Date" alt="Star History Chart" width="700" />
+  </a>
+</div>
